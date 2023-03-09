@@ -41,7 +41,7 @@ def load(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: int) -
     with open(Path(ckpt_dir) / "params.json", "r") as f:
         params = json.loads(f.read())
 
-    model_args: ModelArgs = ModelArgs(max_seq_len=1024, max_batch_size=32, **params)
+    model_args: ModelArgs = ModelArgs(max_seq_len=512, max_batch_size=32, **params)
     tokenizer = Tokenizer(model_path=tokenizer_path)
     model_args.vocab_size = tokenizer.n_words
     torch.set_default_tensor_type(torch.cuda.HalfTensor)
@@ -67,6 +67,14 @@ def main(ckpt_dir: str, tokenizer_path: str, temperature: float = 0.8, top_p: fl
         print(result)
         print("\n==================================\n")
 
+    while True:
+        user_input = input("Enter a prompt(or 'q' to quit): ")
+        if user_input == 'q':
+            break
+        # Do something with the user input here
+        results = generator.generate([user_input], max_gen_len=256, temperature=temperature, top_p=top_p)
+        print(f"\nKongFoo:\n\n{results[0]}")
+        print("\n======================================================================================================\n")
 
 if __name__ == "__main__":
     fire.Fire(main)
